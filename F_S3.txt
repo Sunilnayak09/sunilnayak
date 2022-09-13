@@ -1,0 +1,222 @@
+﻿S3 (Simple Storge Service):
+==========================
+1)S3 is a storage for the internet,It has a simple webservice 
+interface for simple storing & retrival of any amount of data ,anytime, 
+from any where.
+2) S3 is object based
+3) s3 has a distributed data-store architecture where obeject store in multiple 
+locations internally.
+4) Data is stored in buckets
+5) We cannot attach bucket to Ec2 instance.
+6) A bucket is a flat container of objects
+  -->it does not provide any hierachical of objects
+
+7) There are 4 types of storage classes inside s3 service, We can keep objects
+in any type of storage class. We can differentiate These 4 types of storage class based
+on 
+  a) Pricing
+  b) Availbility
+  c) Durability
+
+8) Type of S3 Storge classes:
+   ========================
+a) S3 Standard:offers high durability, availability, and performance object 
+    storage for frequently accessed data.
+	
+	durability : 99.999999999% 
+	availability:99.99% 
+
+b) S3 Standard-Infrequent Access: It is for data that is accessed less frequently, 
+but requires rapid access when needed. Low per GB storage price and per GB retrieval 
+fee thn the Standard S3.
+    
+	durability : 99.9999999% 
+	availability:99.9% 
+
+c) Reduced redundancy (RRS):Reduced Redundancy Storage (RRS) is a new storage option within 
+Amazon S3 that enables customers to reduce their costs by storing non-critical, 
+reproducible data at lower levels of redundancy than Amazon S3’s standard storage.
+
+    Durability   : 99.99%
+    Availability:99.99%    
+ 
+d) Glacier :
+	i) Is an archiving storge for infrequently accced data
+	ii) Archived objects are not availble for realtime access,
+		you need submit a retrival request,resore the data
+		first before you read it (Can take few Hours)
+	iii) Requested archived data will be copied to RRS class
+     
+	iv) After data is retrieved you have upto 24 hours to download it.
+    v)You can not specifiy Glacier as the Storge class at the time you create
+      an object
+   vi) you need to keep your data for a min 90 days
+   vii)Suitable/ usecases for 
+		- Media asset archiving
+		- Health care information archiving.
+   ix) upload size 1Byte - 40 TB
+    x)You can upload data to Glacier directly from CLI and
+     You can not do that through the AWS Console
+   xi)We can transitioning objects to Glacier from Other class via Lifecycle rules
+  
+    Durability   : 99.999999999
+    Availability:N/A
+
+==================================================================
+S3 Bucket:
+==========
+1) Its an container to store the files
+2) We can create floders inside s3
+3) We can directly upload the objects/files into s3
+4) Bucket ownership cannot transaferble
+5)100 bucket only for account
+6)An s3 bucket has properties which including
+	-- Access permissions
+	-- versioning status
+	-- storge class
+7) By default ,a bucket,Its obeject are private	
+8) We can write bucket policies  to control the access.
+9) We can define "LifeCycle" Rules to move the objects from one storage to other
+storge type class inside the bucket. 
+10) One bucket can have different types of storge classes files/objects.
+11) Versioning can be enables at Bucket level only
+12) Bucket names are DNS-compliant naming conventions. Its means Bucket name must 
+be  unique in entire AWS,No "_" in bucket name,etc .
+
+13) Whenever we upload any object s3 service will create unique url for that object.
+=======================================================
+
+S3 "LifeCycle" Rules: 
+====================
+1) We can write the Rules on s3 bucket to move the objects from one storage class to 
+other storge type class. 
+ ex : standard to Infrequent
+      infrequent to Glacier
+	  Glacier to expire
+2) We can write multiple LifeCycle rules on same bucket
+3) Move the objects from  "standard to Infrequent", Object must be in Standard type
+   storge of min of 30 days,.
+4) Move the objects from  "Infrequent To Glacier", Object must be in Infrequent Access 
+type  storge of min of 30 days,.
+5) Move the objects from  "Standard To Glacier" Object must be in Standard type
+   storge of min of 1 days.
+6) You can define separate  life cycle rules for current version objects and
+   previous version objects.
+
+Practice:
+=========
+Q1)
+ i) Create s3 bucket in mumbai region
+ ii) upload any files from your local machine
+ iii) give public access to the file which you have uploaded.
+ iv) try to accces that file from your browser.
+
+Q2)
+  i)  Enable versioning on the bucket which you created in Q1 and 
+  ii) upload any existing file after doing some changes in it.
+  iii) Try to open previous version of the file from browser.
+  iv) Try to open Current version of the file from browser.
+   v) If ur not able to access the current version, change the ACL the file to public.  
+  
+Q3) Change the storge class of any file to Standard-IA
+Q4) Define life cycle rules on Bucket which we have created in step Q1.
+    based on below policy.
+   i)change storge class from "Standard" to "Infrequent Access" 
+      After 60 days.
+   ii) change storge class from "Infrequent Access" to "Glacier"
+      After 90 days	  
+   iii) to expire all the objects after 120 days. 
+
+Q5) Try to delete the bucket which you have created in Q1.
+
+
+Cross Region Replication: 
+========================
+i) Replicate S3 buckets objects from One region to Other region bucket.
+ii) Rules to enable Cross Region Replication
+    a)Source and destination buckets must be in deferent region
+	b) Versioning must be enabled on both buckets.
+	
+
+Practice:
+=========
+Q6) 
+  i) Create S3 Buckets in Mumbai Region
+ ii) Enable Versioning
+iii)Upload some files into S3 bucket
+ iv) Create s3 bucket in Tokoyo Region
+  v) Enable Replication in Mumbai Region s3 ,To replicate the objects into 
+     Tokoyo region bucket.
+  vi) Check the Tokoyo region bucket, for Is there any files are replicated or not.	 
+vii) Now upload any files into Mumbai region bucket
+viii) Check Objects are replicated or not in Tokoyo bucket.	
+=================================================================================
+What is AWS CLI:
+================
+i) Aws Cli is a special software, to run the aws related commands.
+ii) By using Cli  we can manage all aws resources 
+ex: Create Ec2 instance,Stop/Terminate Ec2
+instance ,Creating/deleteing S3 buckets, Uploging/downloading objects from s3 etc
+iii) whatever the activities we are doing from GUI,
+     we can do all those activities using cli  also.
+iv) AWS cli command are same in all OS env.
+
+Install and connect to aws account using cli from local window machine.
+=======================================================================
+1) Download aws cli "MSI Installer" from below link
+   https://docs.aws.amazon.com/cli/latest/userguide/awscli-install-windows.html
+2) Install AWS cli
+3) Once installation is done goto windows command prompt
+4) Run below command for verfication
+    aws --version
+5) To connect your aws acccount:
+   a) Generate Access Key and secret access key
+       From Aws Dash Board 
+	   Click on AccountName dropdown --> "My security Credentials"
+   b) Click on " Access Keys"
+   c) Click On "Create New Access Key"
+   d) Click "Download key File"   
+   e) Open the downloaded file , It contains Access & secret  Keys
+   f) open windows command prompt
+        Start --> run --> cmd
+   g) run below command, it will prompt you for accces key ,secret key, region name and 
+     default output format
+         
+		 aws configure
+   		 
+    Note: Aws assigned code for each region, we need configure that code in
+	      "region name" feild.
+		  
+    i) Now you can run any aws commands
+	
+	    syntax: aws <service_name> <service_related_cmd> --<args> 
+        
+		ex: a) aws s3 ls
+            above cms display list of s3 buckets inside your account.
+			b) aws s3 ls s3://intelliq-hyd
+			display list of files in "intelliq-hyd" s3 bucket
+			c) aws s3 rb s3://intelliq-hyd
+	
+How to Copy the data from s3 bucket to EC2 instance or vice-versa?
+==================================================================
+i) Launch Ubuntu ec2 instance
+ii) Install aws cli by running below commands
+     a) sudo apt-get update
+	 b) sudo apt-get install awscli
+iii) Configure aws Access,secret access key, region & default output
+      a) aws configure
+iv)  Now you can access s3 data inside ec2.
+
+    a) Copy /etc/passwd file into any existing s3 bucket.
+	     
+		 aws s3 cp /etc/passwd s3://bucket_name
+		 
+    b) down any s3 bucket file into  ec2 instance
+        aws s3 cp s3://bucket_name/file_name .
+	  
+	 
+Create Events on S3 Bucket:
+===========================
+Q) Whenever If I upload/delete object  from s3, we need to send some notification
+    to user(email/sms).
+

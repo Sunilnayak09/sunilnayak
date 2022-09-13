@@ -1,0 +1,104 @@
+Application monitoring is a process that 
+ensures that a software application processes and 
+performs in an expected manner and scope. 
+If any Unexpected error are coming 
+we need to notify to the Techinal Team
+
+Ex :1) Lets take "Net Banking Application"
+    Which is hosted on the Server .
+	End users accessing the the Application.
+	In Last 10 min if we get more the 1000
+	invalid users error / Bal Transfer error/
+	Invalid Pin etc We need to send the Alter.
+	
+   2) For Example all end user activities
+     are storged in the log file inside 
+	 the server.
+   3) From That log file if you want to extract 
+      specific error,you need write the Script
+       and need to send Noticifation.	  
+   4) For Each and every error code we need 
+      write the script.
+   6) To Avoid These this AWS as given  
+      "CloudWatch Log" service.
+	  
+CloudWatch Rep Properties:
+===========================
+1) It Filter the specific error from 
+   log file
+2) It Raise the Alarms
+3) It can Send Notifications.
+===========================================
+Log Stream : Log file from Instances
+Log Group: Combination of Streams
+=============================================
+
+How to Send Logfile from Instance to CloudWatch Rep?
+==================================================
+Steps:
+1) Install AWS Logs Agent on EC2 Instance
+2) EC2 Instance need to have access to Cloud Watch Repositprory
+    i) Create EC2 Instance IAM Role 
+	and Attach "CloudWatchLogsFullAccess"
+      policy to It.
+   ii) Attach IAM Role Ec2 Instance
+   
+Practical:
+==========
+1) Send SSh Log File Details CloudWatch Rep.
+2) In Last 5 mins if there are 10 Invalid
+    password send notification to "
+	svreddyp.28@gmail.com"
+	
+Note : Ssh log file location is "/var/log/auth.log"
+	
+PreReq:
+=======
+1) Launch Ubnunti EC2 instance in Sing Region
+2) Install python2.7
+     sudo apt-get install python2.7 -y
+3) Download cloud watch log agent software
+    
+    curl https://s3.amazonaws.com/aws-cloudwatch/downloads/latest/awslogs-agent-setup.py -O
+	
+4) Install 	cloud watch log agent
+  sudo python2.7 ./awslogs-agent-setup.py --region us-southeast-1
+3) Press enter 6 times
+4) Type "1" press enter
+5) 	Type "1" press enter
+6) 	Type "1" press enter
+7) Type "N" press enter
+
+3) cloud watch log agent config file location
+      /var/awslogs/etc/awslogs.conf
+4) cloud watch log agent log file location
+     /var/log/awslogs.log
+5) goto to below path
+    cd /var/awslogs/etc/
+6) open config file 
+    vim awslogs.conf
+7) 	goto end of file add below lines
+       [MyOSUsersLogs]
+		buffer_duration = 5000
+		log_group_name = OSLoginDet
+		file = /var/log/auth.log
+		initial_position = start_of_file
+		datetime_format = %b %d %H:%M:%S
+		log_stream_name = my-{instance_id}
+8) restart awslogs service
+     sudo service awslogs stop
+	 sudo service awslogs start
+9) you are able see log details from 
+   AWS Dash board  
+   Nav:
+    Services--> CloudWatch-->Logs-->Loggroups  
+=====================================   
+
+
+   
+ 
+	
+	
+	
+     
+      
